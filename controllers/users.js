@@ -35,6 +35,9 @@ const getUser = (req, res) => {
     })
     .catch((err) => {
       console.error("Error fetching user by ID:", err);
+      if (err.name === "CastError") {
+        return res.status(400).send({ message: "Invalid user ID format" });
+      }
       res.status(500).send("Internal Server Error");
     });
 };

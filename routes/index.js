@@ -4,8 +4,8 @@ const usersRouter = require("./users");
 
 router.use("/users", usersRouter);
 
-// const clothingItemsRouter = require("./clothingItems");
+const clothingItemsRouter = require("./clothingItems");
 
-// router.use("/clothing-items", clothingItemsRouter);
+router.use("/items", clothingItemsRouter);
 
 module.exports = router;
