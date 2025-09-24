@@ -3,7 +3,10 @@ const ClothingItem = require("../models/clothingItem");
 const getClothingItems = (req, res) => {
   ClothingItem.find({})
     .then((items) => res.status(200).send(items))
-    .catch((err) => res.status(500).send({ message: "Internal Server Error" }));
+    .catch((err) => {
+      console.error("Error fetching clothing items:", err);
+      return res.status(500).send("Internal Server Error");
+    });
 };
 
 const createClothingItem = (req, res) => {
@@ -18,7 +21,7 @@ const createClothingItem = (req, res) => {
       if (err.name === "ValidationError") {
         return res.status(400).send({ message: "Invalid data provided" });
       }
-      res.status(500).send("Internal Server Error");
+      return res.status(500).send("Internal Server Error");
     });
 };
 
@@ -42,7 +45,7 @@ const deleteClothingItem = (req, res) => {
         return res.status(400).send({ message: "Invalid item ID format" });
       }
       console.error("Error deleting clothing item:", err);
-      res.status(500).send("Internal Server Error");
+      return res.status(500).send("Internal Server Error");
     });
 };
 
@@ -66,7 +69,7 @@ const likeItem = (req, res) => {
       if (err.name === "CastError") {
         return res.status(400).send({ message: "Invalid item ID format" });
       }
-      res.status(500).send("Internal Server Error");
+      return res.status(500).send("Internal Server Error");
     });
 };
 
@@ -90,7 +93,7 @@ const dislikeItem = (req, res) => {
       if (err.name === "CastError") {
         return res.status(400).send({ message: "Invalid item ID format" });
       }
-      res.status(500).send("Internal Server Error");
+      return res.status(500).send("Internal Server Error");
     });
 };
 

@@ -7,7 +7,7 @@ const getUsers = (req, res) => {
     .then((users) => res.status(200).send(users))
     .catch((err) => {
       console.error("Error fetching users:", err);
-      res.status(500).send("Internal Server Error");
+      return res.status(500).send("Internal Server Error");
     });
 };
 
@@ -20,7 +20,7 @@ const createUser = (req, res) => {
       if (err.name === "ValidationError") {
         return res.status(400).send({ message: "Invalid data provided" });
       }
-      res.status(500).send("Internal Server Error");
+      return res.status(500).send("Internal Server Error");
     });
 };
 
@@ -31,14 +31,14 @@ const getUser = (req, res) => {
       if (!user) {
         return res.status(404).send({ message: "User not found" });
       }
-      res.status(200).send(user);
+      return res.status(200).send(user);
     })
     .catch((err) => {
       console.error("Error fetching user by ID:", err);
       if (err.name === "CastError") {
         return res.status(400).send({ message: "Invalid user ID format" });
       }
-      res.status(500).send("Internal Server Error");
+      return res.status(500).send("Internal Server Error");
     });
 };
 
