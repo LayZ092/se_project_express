@@ -62,7 +62,7 @@ const likeItem = (req, res) => {
       if (!item) {
         return res.status(404).send({ message: "Item not found" });
       }
-      res.status(200).send(item);
+      return res.status(200).send(item);
     })
     .catch((err) => {
       console.error("Error liking item:", err);
@@ -86,7 +86,7 @@ const dislikeItem = (req, res) => {
       if (!item) {
         return res.status(404).send({ message: "Item not found" });
       }
-      res.status(200).send(item);
+      return res.status(200).send(item);
     })
     .catch((err) => {
       console.error("Error unliking item:", err);
