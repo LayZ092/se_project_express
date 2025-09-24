@@ -1,6 +1,6 @@
-const express = require("express");
-const mongoose = require("mongoose");
-const mainRouter = require("./routes/index");
+import express from "express";
+import mongoose from "mongoose";
+import { router } from "./routes/index.js";
 
 const app = express();
 
@@ -20,7 +20,10 @@ app.use((req, res, next) => {
   };
   next();
 });
-app.use("/", mainRouter);
+app.use("/", router);
+app.use((req, res) => {
+  res.status(404).json({ message: "Requested resource not found" });
+});
 
 app.listen(PORT, () => {
   console.log(`Server is Listening on port ${PORT}`);

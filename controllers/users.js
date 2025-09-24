@@ -1,4 +1,10 @@
-const User = require("../models/user");
+import {
+  INTERNAL_SERVER_ERROR,
+  BAD_REQUEST,
+  NOT_FOUND,
+} from "../utils/errors.js";
+
+import User from "../models/user.js";
 
 // GET users
 
@@ -7,7 +13,9 @@ const getUsers = (req, res) => {
     .then((users) => res.status(200).send(users))
     .catch((err) => {
       console.error("Error fetching users:", err);
-      return res.status(500).send("Internal Server Error");
+      return res
+        .status(INTERNAL_SERVER_ERROR)
+        .send({ message: "An error has occurred on the server." });
     });
 };
 
@@ -18,9 +26,13 @@ const createUser = (req, res) => {
     .catch((err) => {
       console.error("Error creating user:", err);
       if (err.name === "ValidationError") {
-        return res.status(400).send({ message: "Invalid data provided" });
+        return res
+          .status(BAD_REQUEST)
+          .send({ message: "Invalid data provided" });
       }
-      return res.status(500).send("Internal Server Error");
+      return res
+        .status(INTERNAL_SERVER_ERROR)
+        .send({ message: "An error has occurred on the server." });
     });
 };
 
@@ -29,17 +41,21 @@ const getUser = (req, res) => {
   User.findById(userId)
     .then((user) => {
       if (!user) {
-        return res.status(404).send({ message: "User not found" });
+        return res.status(NOT_FOUND).send({ message: "User not found" });
       }
       return res.status(200).send(user);
     })
     .catch((err) => {
       console.error("Error fetching user by ID:", err);
       if (err.name === "CastError") {
-        return res.status(400).send({ message: "Invalid user ID format" });
+        return res
+          .status(BAD_REQUEST)
+          .send({ message: "Invalid user ID format" });
       }
-      return res.status(500).send("Internal Server Error");
+      return res
+        .status(INTERNAL_SERVER_ERROR)
+        .send({ message: "An error has occurred on the server." });
     });
 };
 
-module.exports = { getUsers, createUser, getUser };
+export { getUsers, createUser, getUser };

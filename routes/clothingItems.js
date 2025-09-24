@@ -1,11 +1,12 @@
-const express = require("express");
-const {
+import express from "express";
+
+import {
   createClothingItem,
   getClothingItems,
   deleteClothingItem,
   likeItem,
   dislikeItem,
-} = require("../controllers/clothingItems");
+} from "../controllers/clothingItems.js";
 
 const router = express.Router();
 
@@ -15,4 +16,4 @@ router.delete("/:itemId", deleteClothingItem);
 router.put("/:itemId/likes", likeItem);
 router.delete("/:itemId/likes", dislikeItem);
 
-module.exports = router;
+export { router };

@@ -1,11 +1,10 @@
-const router = require("express").Router();
+import { Router } from "express";
+import { router as usersRouter } from "./users.js";
+import { router as clothingItemsRouter } from "./clothingItems.js";
 
-const usersRouter = require("./users");
+const router = Router();
 
 router.use("/users", usersRouter);
-
-const clothingItemsRouter = require("./clothingItems");
-
 router.use("/items", clothingItemsRouter);
 
-module.exports = router;
+export { router, usersRouter, clothingItemsRouter };
