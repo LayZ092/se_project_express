@@ -16,4 +16,4 @@ router.delete("/:itemId", deleteClothingItem);
 router.put("/:itemId/likes", likeItem);
 router.delete("/:itemId/likes", dislikeItem);
 
-export { router };
+export default router;

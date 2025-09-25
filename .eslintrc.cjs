@@ -21,6 +21,13 @@ module.exports = {
   },
   rules: {
     "no-console": ["warn", { allow: ["error"] }],
-    "no-underscore-dangle": ["warn", { allow: ["_id", "_rev"] }],
+    "no-underscore-dangle": ["warn", { allow: ["_id"] }],
+    "import/extensions": [
+      "error",
+      "ignorePackages",
+      {
+        js: "always",
+      },
+    ],
   },
 };

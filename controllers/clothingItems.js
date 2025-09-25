@@ -9,7 +9,7 @@ import ClothingItem from "../models/clothingItem.js";
 
 const getClothingItems = (req, res) => {
   ClothingItem.find({})
-    .then((items) => res.status(200).send(items))
+    .then((items) => res.send(items))
     .catch((err) => {
       console.error("Error fetching clothing items:", err);
       return res
@@ -81,7 +81,7 @@ const likeItem = (req, res) => {
       if (!item) {
         return res.status(NOT_FOUND).send({ message: "Item not found" });
       }
-      return res.status(200).send(item);
+      return res.send(item);
     })
     .catch((err) => {
       console.error("Error liking item:", err);
@@ -109,7 +109,7 @@ const dislikeItem = (req, res) => {
       if (!item) {
         return res.status(NOT_FOUND).send({ message: "Item not found" });
       }
-      return res.status(200).send(item);
+      return res.send(item);
     })
     .catch((err) => {
       console.error("Error unliking item:", err);

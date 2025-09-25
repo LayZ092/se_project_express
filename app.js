@@ -1,9 +1,9 @@
 import express from "express";
 import mongoose from "mongoose";
-import { router } from "./routes/index.js";
+import router from "./routes/index.js";
+import { NOT_FOUND } from "./utils/errors.js";
 
 const app = express();
-
 const { PORT = 3001 } = process.env;
 
 mongoose
@@ -22,7 +22,7 @@ app.use((req, res, next) => {
 });
 app.use("/", router);
 app.use((req, res) => {
-  res.status(404).json({ message: "Requested resource not found" });
+  res.status(NOT_FOUND).json({ message: "Requested resource not found" });
 });
 
 app.listen(PORT, () => {

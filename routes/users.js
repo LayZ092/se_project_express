@@ -8,4 +8,4 @@ router.get("/", getUsers);
 router.get("/:userId", getUser);
 router.post("/", createUser);
 
-export { router };
+export default router;

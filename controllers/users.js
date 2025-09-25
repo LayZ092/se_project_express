@@ -43,7 +43,7 @@ const getUser = (req, res) => {
       if (!user) {
         return res.status(NOT_FOUND).send({ message: "User not found" });
       }
-      return res.status(200).send(user);
+      return res.send(user);
     })
     .catch((err) => {
       console.error("Error fetching user by ID:", err);
