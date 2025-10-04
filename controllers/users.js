@@ -2,9 +2,16 @@ import {
   INTERNAL_SERVER_ERROR,
   BAD_REQUEST,
   NOT_FOUND,
+  CONFLICT,
+  UNAUTHORIZED,
 } from "../utils/errors.js";
 
 import User from "../models/user.js";
+
+import bcrypt, { genSalt } from "bcryptjs";
+
+import jwt from "jsonwebtoken";
+import { JWT_SECRET } from "../utils/config.js";
 
 // GET users
 
@@ -20,20 +27,27 @@ const getUsers = (req, res) => {
 };
 
 const createUser = (req, res) => {
-  const { name, avatar } = req.body;
-  User.create({ name, avatar })
-    .then((user) => res.status(201).send(user))
-    .catch((err) => {
-      console.error("Error creating user:", err);
-      if (err.name === "ValidationError") {
+  const { name, avatar, email, password } = req.body;
+  (async () => {
+    try {
+      const salt = await bcrypt.genSalt(10);
+      const hash = await bcrypt.hash(password, salt);
+      const user = await User.create({ name, avatar, email, password: hash });
+      return res.status(201).send(user);
+    } catch (err) {
+      if (err.code === 11000) {
+        return res.status(CONFLICT).send({ message: "Email already exists" });
+      } else if (err.name === "ValidationError") {
         return res
           .status(BAD_REQUEST)
           .send({ message: "Invalid data provided" });
+      } else {
+        return res
+          .status(INTERNAL_SERVER_ERROR)
+          .send({ message: "An error has occurred on the server." });
       }
-      return res
-        .status(INTERNAL_SERVER_ERROR)
-        .send({ message: "An error has occurred on the server." });
-    });
+    }
+  })();
 };
 
 const getUser = (req, res) => {
@@ -58,4 +72,25 @@ const getUser = (req, res) => {
     });
 };
 
-export { getUsers, createUser, getUser };
+const login = async (req, res) => {
+  const { email, password } = req.body;
+  try {
+    const user = await User.findUserByCredentials(email, password);
+
+    if (!user || user === UNAUTHORIZED) {
+      return res
+        .status(UNAUTHORIZED)
+        .send({ message: "Incorrect email or password" });
+    }
+
+    const token = jwt.sign({ _id: user._id }, JWT_SECRET, { expiresIn: "7d" });
+    return res.send({ token });
+  } catch (err) {
+    console.error("Error during login:", err);
+    return res
+      .status(INTERNAL_SERVER_ERROR)
+      .send({ message: "An error has occurred on the server." });
+  }
+};
+
+export { getUsers, createUser, getUser, login };
