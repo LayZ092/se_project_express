@@ -2,6 +2,7 @@ import {
   INTERNAL_SERVER_ERROR,
   BAD_REQUEST,
   NOT_FOUND,
+  FORBIDDEN,
 } from "../utils/errors.js";
 
 import ClothingItem from "../models/clothingItem.js";
@@ -20,7 +21,7 @@ const getClothingItems = (req, res) => {
 
 const createClothingItem = (req, res) => {
   const { name, weather, imageUrl } = req.body;
-  const owner = req.user._id;
+  const { userId: owner } = req.user;
   ClothingItem.create({ name, weather, imageUrl, owner })
     .then((item) => {
       res.status(201).send(item);
@@ -40,6 +41,8 @@ const createClothingItem = (req, res) => {
 
 const deleteClothingItem = (req, res) => {
   const { itemId } = req.params;
+  const { userId: currentUserId } = req.user;
+
   ClothingItem.findById(itemId)
     .then((item) => {
       if (!item) {
@@ -47,6 +50,14 @@ const deleteClothingItem = (req, res) => {
           .status(NOT_FOUND)
           .send({ message: "Clothing item not found" });
       }
+
+      const ownerId = item.owner ? item.owner.toString() : null;
+      if (!ownerId || ownerId !== String(currentUserId)) {
+        return res
+          .status(FORBIDDEN)
+          .send({ message: "Forbidden: you cannot delete this item" });
+      }
+
       return item
         .deleteOne()
         .then(() =>
@@ -69,7 +80,7 @@ const deleteClothingItem = (req, res) => {
 };
 
 const likeItem = (req, res) => {
-  const userId = req.user._id;
+  const { userId } = req.user;
   const { itemId } = req.params;
 
   ClothingItem.findByIdAndUpdate(
@@ -97,7 +108,7 @@ const likeItem = (req, res) => {
 };
 
 const dislikeItem = (req, res) => {
-  const userId = req.user._id;
+  const { userId } = req.user;
   const { itemId } = req.params;
 
   ClothingItem.findByIdAndUpdate(

@@ -1,5 +1,5 @@
 import jwt from "jsonwebtoken";
-import { JWT_SECRET } from "../utils/config.js";
+import JWT_SECRET from "../utils/config.js";
 import { UNAUTHORIZED } from "../utils/errors.js";
 
 const auth = (req, res, next) => {

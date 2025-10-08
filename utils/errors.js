@@ -3,6 +3,7 @@ const BAD_REQUEST = 400;
 const NOT_FOUND = 404;
 const CONFLICT = 409;
 const UNAUTHORIZED = 401;
+const FORBIDDEN = 403;
 
 export {
   INTERNAL_SERVER_ERROR,
@@ -10,4 +11,5 @@ export {
   NOT_FOUND,
   CONFLICT,
   UNAUTHORIZED,
+  FORBIDDEN,
 };
