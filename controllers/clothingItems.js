@@ -21,7 +21,7 @@ const getClothingItems = (req, res) => {
 
 const createClothingItem = (req, res) => {
   const { name, weather, imageUrl } = req.body;
-  const { userId: owner } = req.user;
+  const owner = req.user._id;
   ClothingItem.create({ name, weather, imageUrl, owner })
     .then((item) => {
       res.status(201).send(item);
@@ -41,7 +41,7 @@ const createClothingItem = (req, res) => {
 
 const deleteClothingItem = (req, res) => {
   const { itemId } = req.params;
-  const { userId: currentUserId } = req.user;
+  const currentUserId = req.user._id;
 
   ClothingItem.findById(itemId)
     .then((item) => {
@@ -80,7 +80,7 @@ const deleteClothingItem = (req, res) => {
 };
 
 const likeItem = (req, res) => {
-  const { userId } = req.user;
+  const userId = req.user._id;
   const { itemId } = req.params;
 
   ClothingItem.findByIdAndUpdate(
@@ -108,7 +108,7 @@ const likeItem = (req, res) => {
 };
 
 const dislikeItem = (req, res) => {
-  const { userId } = req.user;
+  const userId = req.user._id;
   const { itemId } = req.params;
 
   ClothingItem.findByIdAndUpdate(

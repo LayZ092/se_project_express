@@ -37,14 +37,6 @@ const userSchema = new Schema({
     required: true,
     minlength: 8,
     select: false,
-    validate: {
-      validator(value) {
-        return validator.isStrongPassword(value, {
-          minLength: 8,
-        });
-      },
-      message: "Password must be strong",
-    },
   },
 });
 

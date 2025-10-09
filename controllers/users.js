@@ -55,7 +55,7 @@ const createUser = (req, res) => {
 };
 
 const getCurrentUser = (req, res) => {
-  const { userId } = req.user;
+  const userId = req.user._id;
   User.findById(userId)
     .then((user) => {
       if (!user) {
@@ -99,7 +99,7 @@ const login = async (req, res) => {
         .send({ message: "Incorrect email or password" });
     }
 
-    const token = jwt.sign({ userId: user._id }, JWT_SECRET, {
+    const token = jwt.sign({ _id: user._id }, JWT_SECRET, {
       expiresIn: "7d",
     });
     return res.send({ token });
@@ -112,7 +112,7 @@ const login = async (req, res) => {
 };
 
 const updateProfile = (req, res) => {
-  const { userId } = req.user;
+  const userId = req.user._id;
   const { name, avatar } = req.body;
 
   User.findByIdAndUpdate(
