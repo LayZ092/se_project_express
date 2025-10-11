@@ -12,19 +12,6 @@ import User from "../models/user.js";
 
 import JWT_SECRET from "../utils/config.js";
 
-// GET users
-
-const getUsers = (req, res) => {
-  User.find({})
-    .then((users) => res.status(200).send(users))
-    .catch((err) => {
-      console.error("Error fetching users:", err);
-      return res
-        .status(INTERNAL_SERVER_ERROR)
-        .send({ message: "An error has occurred on the server." });
-    });
-};
-
 const createUser = (req, res) => {
   const { name, avatar, email, password } = req.body;
   (async () => {
@@ -139,4 +126,4 @@ const updateProfile = (req, res) => {
     });
 };
 
-export { getUsers, createUser, getCurrentUser, login, updateProfile };
+export { createUser, getCurrentUser, login, updateProfile };

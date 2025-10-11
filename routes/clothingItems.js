@@ -2,7 +2,6 @@ import express from "express";
 
 import {
   createClothingItem,
-  getClothingItems,
   deleteClothingItem,
   likeItem,
   dislikeItem,
@@ -10,7 +9,6 @@ import {
 
 const router = express.Router();
 
-router.get("/", getClothingItems);
 router.post("/", createClothingItem);
 router.delete("/:itemId", deleteClothingItem);
 router.put("/:itemId/likes", likeItem);
