@@ -2,7 +2,8 @@ import express from "express";
 import cors from "cors";
 import mongoose from "mongoose";
 import router from "./routes/index.js";
-import { NOT_FOUND } from "./utils/errors.js";
+import errorHandler from "./middlewares/error-handler.js";
+import NotFoundError from "./errors/not-found-error.js";
 
 const app = express();
 const { PORT = 3001 } = process.env;
@@ -19,8 +20,10 @@ app.use(cors());
 
 app.use("/", router);
 app.use((req, res) => {
-  res.status(NOT_FOUND).json({ message: "Requested resource not found" });
+  throw new NotFoundError("Requested resource not found");
 });
+
+app.use(errorHandler);
 
 app.listen(PORT, () => {
   console.log(`Server is Listening on port ${PORT}`);

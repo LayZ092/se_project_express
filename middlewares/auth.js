@@ -1,11 +1,11 @@
 import jwt from "jsonwebtoken";
 import JWT_SECRET from "../utils/config.js";
-import { UNAUTHORIZED } from "../utils/errors.js";
+import UnauthorizedError from "../errors/unauthorized-error.js";
 
 const auth = (req, res, next) => {
   const { authorization } = req.headers;
   if (!authorization) {
-    return res.status(UNAUTHORIZED).send({ message: "Authorization required" });
+    throw new UnauthorizedError("Authorization required");
   }
 
   const token = authorization.replace("Bearer ", "");
@@ -13,7 +13,7 @@ const auth = (req, res, next) => {
   try {
     payload = jwt.verify(token, JWT_SECRET);
   } catch (err) {
-    return res.status(UNAUTHORIZED).send({ message: "Authorization required" });
+    throw new UnauthorizedError("Authorization required");
   }
 
   req.user = payload;

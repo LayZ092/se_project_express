@@ -1,18 +1,16 @@
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-import {
-  INTERNAL_SERVER_ERROR,
-  BAD_REQUEST,
-  NOT_FOUND,
-  CONFLICT,
-  UNAUTHORIZED,
-} from "../utils/errors.js";
+import NotFoundError from "../errors/not-found-error.js";
+import BadRequestError from "../errors/bad-request-error.js";
+import ConflictError from "../errors/conflict-error.js";
+import UnauthorizedError from "../errors/unauthorized-error.js";
+import UNAUTHORIZED from "../utils/errors.js";
 
 import User from "../models/user.js";
 
 import JWT_SECRET from "../utils/config.js";
 
-const createUser = (req, res) => {
+const createUser = (req, res, next) => {
   const { name, avatar, email, password } = req.body;
   (async () => {
     try {
@@ -27,43 +25,38 @@ const createUser = (req, res) => {
       });
     } catch (err) {
       if (err.code === 11000) {
-        return res.status(CONFLICT).send({ message: "Email already exists" });
+        next(new ConflictError("Email already exists"));
+        return;
       }
       if (err.name === "ValidationError") {
-        return res
-          .status(BAD_REQUEST)
-          .send({ message: "Invalid data provided" });
+        next(new BadRequestError("Invalid data provided"));
+        return;
       }
-      return res
-        .status(INTERNAL_SERVER_ERROR)
-        .send({ message: "An error has occurred on the server." });
+      next(err);
     }
   })();
 };
 
-const getCurrentUser = (req, res) => {
+const getCurrentUser = (req, res, next) => {
   const userId = req.user._id;
   User.findById(userId)
     .then((user) => {
       if (!user) {
-        return res.status(NOT_FOUND).send({ message: "User not found" });
+        throw new NotFoundError("User not found");
       }
       return res.send(user);
     })
     .catch((err) => {
       console.error("Error fetching user by ID:", err);
       if (err.name === "CastError") {
-        return res
-          .status(BAD_REQUEST)
-          .send({ message: "Invalid user ID format" });
+        next(new BadRequestError("Invalid user ID format"));
+        return;
       }
-      return res
-        .status(INTERNAL_SERVER_ERROR)
-        .send({ message: "An error has occurred on the server." });
+      next(err);
     });
 };
 
-const login = async (req, res) => {
+const login = async (req, res, next) => {
   const { email, password } = req.body;
 
   if (
@@ -72,18 +65,15 @@ const login = async (req, res) => {
     !password ||
     typeof password !== "string"
   ) {
-    return res
-      .status(BAD_REQUEST)
-      .send({ message: "Email and password are required" });
+    next(new BadRequestError("Email and password are required"));
+    return;
   }
 
   try {
     const user = await User.findUserByCredentials(email, password);
 
     if (!user || user === UNAUTHORIZED) {
-      return res
-        .status(UNAUTHORIZED)
-        .send({ message: "Incorrect email or password" });
+      throw new UnauthorizedError("Incorrect email or password");
     }
 
     const token = jwt.sign({ _id: user._id }, JWT_SECRET, {
@@ -92,13 +82,11 @@ const login = async (req, res) => {
     return res.send({ token });
   } catch (err) {
     console.error("Error during login:", err);
-    return res
-      .status(INTERNAL_SERVER_ERROR)
-      .send({ message: "An error has occurred on the server." });
+    next(err);
   }
 };
 
-const updateProfile = (req, res) => {
+const updateProfile = (req, res, next) => {
   const userId = req.user._id;
   const { name, avatar } = req.body;
 
@@ -109,20 +97,17 @@ const updateProfile = (req, res) => {
   )
     .then((user) => {
       if (!user) {
-        return res.status(NOT_FOUND).send({ message: "User not found" });
+        throw new NotFoundError("User not found");
       }
       return res.send(user);
     })
     .catch((err) => {
       console.error("Error updating user:", err);
       if (err.name === "ValidationError") {
-        return res
-          .status(BAD_REQUEST)
-          .send({ message: "Invalid data provided" });
+        next(new BadRequestError("Invalid data provided"));
+        return;
       }
-      return res
-        .status(INTERNAL_SERVER_ERROR)
-        .send({ message: "An error has occurred on the server." });
+      next(err);
     });
 };
 
