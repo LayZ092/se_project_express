@@ -5,6 +5,9 @@ import router from "./routes/index.js";
 import errorHandler from "./middlewares/error-handler.js";
 import NotFoundError from "./errors/not-found-error.js";
 
+import { errors } from "celebrate";
+import { requestLogger, errorLogger } from "./middlewares/loggers.js";
+
 const app = express();
 const { PORT = 3001 } = process.env;
 
@@ -18,10 +21,15 @@ mongoose
 app.use(express.json());
 app.use(cors());
 
+app.use(requestLogger);
+app.use(errorLogger);
+
 app.use("/", router);
 app.use((req, res) => {
   throw new NotFoundError("Requested resource not found");
 });
+
+app.use(errors());
 
 app.use(errorHandler);
 
