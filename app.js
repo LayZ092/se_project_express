@@ -4,6 +4,7 @@ import mongoose from "mongoose";
 import router from "./routes/index.js";
 import errorHandler from "./middlewares/error-handler.js";
 import NotFoundError from "./errors/not-found-error.js";
+import dotenv from "dotenv";
 
 import { errors } from "celebrate";
 import { requestLogger, errorLogger } from "./middlewares/loggers.js";
@@ -34,5 +35,5 @@ app.use(errors());
 app.use(errorHandler);
 
 app.listen(PORT, () => {
-  console.log(`Server is Listening on port ${PORT}`);
+  console.log(`Server is running on ${PORT}`);
 });
