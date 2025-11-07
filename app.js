@@ -23,15 +23,21 @@ app.use(express.json());
 app.use(cors());
 
 app.use(requestLogger);
-app.use(errorLogger);
+
+app.get("/crash-test", () => {
+  setTimeout(() => {
+    throw new Error("Server will crash now");
+  }, 0);
+});
 
 app.use("/", router);
+
 app.use((req, res) => {
   throw new NotFoundError("Requested resource not found");
 });
 
+app.use(errorLogger);
 app.use(errors());
-
 app.use(errorHandler);
 
 app.listen(PORT, () => {
