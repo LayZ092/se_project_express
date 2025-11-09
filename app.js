@@ -4,7 +4,6 @@ import mongoose from "mongoose";
 import router from "./routes/index.js";
 import errorHandler from "./middlewares/error-handler.js";
 import NotFoundError from "./errors/not-found-error.js";
-import dotenv from "dotenv";
 
 import { errors } from "celebrate";
 import { requestLogger, errorLogger } from "./middlewares/loggers.js";
@@ -23,12 +22,6 @@ app.use(express.json());
 app.use(cors());
 
 app.use(requestLogger);
-
-app.get("/crash-test", () => {
-  setTimeout(() => {
-    throw new Error("Server will crash now");
-  }, 0);
-});
 
 app.use("/", router);
 
